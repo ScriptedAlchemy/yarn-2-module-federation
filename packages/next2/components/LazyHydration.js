@@ -7,10 +7,23 @@ export const handleFederation = async (remoteImport) => {
   const split = remoteImport.split("/");
   const [scope] = split.splice(0, 1);
   const request = split.join("/");
-  if (!process.browser) {
-    const container = await __webpack_require__(
-      `webpack/container/reference/${scope}`
-    ).next1;
+  if (!process.browser){
+    // bootstrap sharing runtime
+    console.log('before bootstrap')
+    await __webpack_init_sharing__("default");
+    // at runtime, resolves from .next/server/pages - so i need to drill back out the app to the remote entry
+    // You could set all your remotes, globally in _document, instead of in the pages like this.
+    // scope in this case is next1, dynamically passed.
+    console.log('before container')
+    const container = __non_webpack_require__(`../../../../${scope}/.next/server/static/runtime/remoteEntry.js`)[scope]
+   console.log('after container');
+    // attach container to share scope
+    console.log(container);
+    try {await container.init(__webpack_share_scopes__.default); } catch(e) {
+      // cant initialize share scope into container more than once. will fail
+    }
+    console.log('after init')
+    // get stuff from that container.
     return await container.get("./" + request).then((factory) => {
       const Module = factory();
       return {

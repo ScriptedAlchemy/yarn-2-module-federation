@@ -1,70 +1,62 @@
-import React, { Fragment } from "react";
+import React, {Fragment} from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import Nav from "../components/nav";
-import LazyHydrate, { handleFederation } from "../components/LazyHydration";
+import LazyHydrate, {handleFederation} from "../components/LazyHydration";
 
 const RemoteTitle = dynamic(
-  async () => {
-    try {
-      /* 
-        Look here:
-        Yarn 2 doesn't recognize what next1 is unless I add the remote to the federation config.
-        Is there still a way to require / import using this syntax, or will it always have to be grabbed from
-        the window object when not specified in the remotes section?
-
-        Also, what implications are there when it comes to SSR; what does that look like if I don't declare the remote upfront?
-      */
-      require("next1/exposedTitle");
-    } catch (e) {
-      return handleFederation("next1/exposedTitle");
-    }
-  },
-  { ssr: true }
+    async () => {
+        const component = await handleFederation("next1/exposedTitle")
+        return component
+    },
+    {ssr: true}
 );
 
-const Home = ({ loaded }) => {
-  return (
-    <div>
-      <Head>
-        <title>Home</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const Home = ({loaded}) => {
+    return (
+        <div>
+            <Head>
+                <title>Home</title>
+                <link rel="icon" href="/favicon.ico"/>
+            </Head>
 
-      <Nav />
+            <Nav/>
 
-      <div className="hero">
-        <h1 className="title">
-          Welcome to Next.js on Webpack 5! <code>next2</code>
-        </h1>
-        <p className="description">
-          To get started, edit <code>pages/index.js</code> and save to reload.
-        </p>
+            <div className="hero">
+                <h1 className="title">
+                    Welcome to Next.js on Webpack 5!
+                    <code>next2</code>
+                </h1>
+                <p className="description">
+                    To get started, edit
+                    <code>pages/index.js</code>
+                    and save to reload.
+                </p>
 
-        <LazyHydrate remote="next1/exposedTitle">
-          <RemoteTitle />
-        </LazyHydrate>
+                <LazyHydrate remote="next1/exposedTitle">
+                    <RemoteTitle/>
+                </LazyHydrate>
 
-        <div className="row">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Learn more about Next.js in the documentation.</p>
-          </a>
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Next.js Learn &rarr;</h3>
-            <p>Learn about Next.js by following an interactive tutorial!</p>
-          </a>
-          <a
-            href="https://github.com/zeit/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Find other example boilerplates on the Next.js GitHub.</p>
-          </a>
-        </div>
-      </div>
+                <div className="row">
+                    <a href="https://nextjs.org/docs" className="card">
+                        <h3>Documentation &rarr;</h3>
+                        <p>Learn more about Next.js in the documentation.</p>
+                    </a>
+                    <a href="https://nextjs.org/learn" className="card">
+                        <h3>Next.js Learn &rarr;</h3>
+                        <p>Learn about Next.js by following an interactive tutorial!</p>
+                    </a>
+                    <a
+                        href="https://github.com/zeit/next.js/tree/master/examples"
+                        className="card"
+                    >
+                        <h3>Examples &rarr;</h3>
+                        <p>Find other example boilerplates on the Next.js GitHub.</p>
+                    </a>
+                </div>
+            </div>
 
-      <style jsx>{`
+            <style jsx>{`
         .hero {
           width: 100%;
           color: #333;
@@ -110,8 +102,8 @@ const Home = ({ loaded }) => {
           color: #333;
         }
       `}</style>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default Home;
